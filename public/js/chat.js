@@ -48,13 +48,23 @@ socket.on('userFriendsList', async ({ friends }) => {
     // cus i am to lazy to learn front-end stuff
     const fButtons = document.querySelectorAll('button')
     for(let i = 1; i < fButtons.length - 1; i++){ // igoner add friend and send message buttons
-        fButtons[i].addEventListener('click', (e) => {
+        fButtons[i].addEventListener('click', async (e) => {
            // console.log(e.target.id)
             // enable chat once a user to chat with is selected
             if($chatScreen.classList.contains('hidden')){
                 $chatScreen.classList.remove('hidden')
             }
-            socket.emit('chat-to', {to: e.target.id})
+            // clear chat before switching to another chat
+            $messages.innerHTML = ''
+
+            // start chatting
+            await socket.emit('chat-to', {to: e.target.id})
+
+
+            // load messages in the room
+            socket.emit('loadChatMessages', (messages) => {
+                console.log(messages)
+            })
         })
     }
 
@@ -66,7 +76,7 @@ socket.on('userFriendsList', async ({ friends }) => {
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
-        text: message.message_body,
+        message_body: message.message_body,
         createdAt: moment(message.createdAt).format('h:mm a'),
         username: message.username
     })

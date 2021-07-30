@@ -11,7 +11,9 @@ const roomSchema = new mongoose.Schema({
         lowercase: true
     },
     users: [ObjectId],
-    messages: [messageSchema],
+    messages: [{
+        message: messageSchema
+    }],
     createdAt:{
         type: Date
     }

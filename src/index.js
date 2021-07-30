@@ -50,13 +50,19 @@ const getUserFriends = async(_id) => {
     return user.friends
 }
 
-const createRoom = async(to, user_id) => {
+const createRoomName = (to, user_id) => {
     let name
     if(to <= user_id){
         name = to.toString() + '' + user_id.toString()
     }else{
         name = user_id.toString() + '' + to.toString()
-    }
+    } 
+    return name
+}
+
+const createRoom = async(to, user_id) => {
+    let name = createRoomName(to, user_id)
+
     const room = new Room({name, users: [to, user_id] })
     await room.save()
     return room
@@ -77,17 +83,21 @@ io.on('connection',async (socket) => {
     await getUserData(socket)
     log('New User has joined', socket.user.username)
     const friends = await getUserFriends(socket.user._id)
+
     // room for 2-friends chatting
     let room
 
+    // room name
+    let room_name
+
     socket.emit('message', 'Admin: Welcome!')
     
-    socket.on('sendMessage', async (message, callback) => {
-        const messageToSend = generateMessage(socket.user.username, message)
-        const msg = new Message(messageToSend)
-        msg.room = room.name
-        const res = await msg.save()
-        log('Mesg', res)
+    socket.on('sendMessage', async (_message, callback) => {
+        const messageToSend = generateMessage(socket.user.username, _message)
+        const message = new Message(messageToSend)
+        message.room = room.name
+        room.messages.push({message})
+        await room.save()
         io.to(room.name).emit('message', messageToSend)
         callback()
     })
@@ -98,20 +108,23 @@ io.on('connection',async (socket) => {
 
 
     socket.on('chat-to', async ({to} ) => {
-       
-        if(to <= socket.user._id){
-            const name = to.toString() + '' + socket.user._id.toString()
-            room = await Room.findOne({name})
-        }else{
-            const name = socket.user._id.toString() + '' + to.toString()
-            room = await Room.findOne({name})
-        }
-
+        
+        let name = room_name = createRoomName(to, socket.user._id)
+        room = await Room.findOne({name})
+    
         if(!room){
             room = await createRoom(to, socket.user._id)
         }
 
         socket.join(room.name)
+        return 
+    })
+
+
+    socket.on('loadChatMessages', async (callback) => {
+        const _room = await Room.findOne({name: room_name}).sort({'messages.message.createdAt': 'desc'})
+        const messages = [..._room.messages]
+        callback(messages)
     })
 })
 
