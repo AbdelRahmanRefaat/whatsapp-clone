@@ -168,3 +168,6 @@ button:disabled {
     padding: 12px 24px 0
 }
 
+.hidden{
+    display: none;
+}

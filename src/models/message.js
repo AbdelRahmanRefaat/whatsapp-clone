@@ -1,8 +1,6 @@
 
 const mongoose = require('mongoose')
-const ObjectId = mongoose.Schema.Types.ObjectId
-const User = require('./user')
-const Room = require('./room')
+
 
 const messageSchema = new mongoose.Schema({
 
@@ -10,8 +8,8 @@ const messageSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    user: {
-        type: ObjectId,
+    username: {
+        type: String,
         required: true
     },
     message_body: {

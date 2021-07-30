@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const ObjectId = mongoose.Schema.Types.ObjectId
-const {message} = require('./message')
+const {messageSchema} = require('./message')
 
 const roomSchema = new mongoose.Schema({
     name: {
@@ -11,11 +11,11 @@ const roomSchema = new mongoose.Schema({
         lowercase: true
     },
     users: [ObjectId],
-    messages: [message],
+    messages: [messageSchema],
     createdAt:{
         type: Date
     }
 })
 
 const Room = mongoose.model('Room', roomSchema)
-module.exports = {Room}
+module.exports = Room
