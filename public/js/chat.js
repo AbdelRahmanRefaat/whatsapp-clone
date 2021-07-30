@@ -32,38 +32,52 @@ socket.connect()
 
 
 
+// Used for rendering messages to chat
+
+const renderMessage = (message) => {
+    const html = Mustache.render(messageTemplate, {
+        message_body: message.message_body,
+        createdAt: moment(message.createdAt).format('h:mm a'),
+        username: message.username
+
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
+}
 
 
 // List existing friends on the side-bar
 socket.on('userFriendsList', async ({ friends }) => {
-    
+
     const friendsArray = []
     friends.forEach(element => friendsArray.push(element.friend));
     const html = await Mustache.render(sidebarTemplate, {
         friends: friendsArray
     })
-    document.querySelector('#sidebar').insertAdjacentHTML('beforeend', html)
+    document.querySelector('.friends-list').innerHTML = html
+    //.insertAdjacentHTML('beforeend', html)
 
     // This is a dummy idea to make users list clickable
     // cus i am to lazy to learn front-end stuff
     const fButtons = document.querySelectorAll('button')
-    for(let i = 1; i < fButtons.length - 1; i++){ // igoner add friend and send message buttons
-        fButtons[i].addEventListener('click', async (e) => {
-           // console.log(e.target.id)
+    for (let i = 1; i < fButtons.length - 1; i++) { // igoner add friend and send message buttons
+        fButtons[i].addEventListener('click',  (e) => {
+            // console.log(e.target.id)
             // enable chat once a user to chat with is selected
-            if($chatScreen.classList.contains('hidden')){
+            if ($chatScreen.classList.contains('hidden')) {
                 $chatScreen.classList.remove('hidden')
             }
             // clear chat before switching to another chat
             $messages.innerHTML = ''
 
             // start chatting
-            await socket.emit('chat-to', {to: e.target.id})
+            socket.emit('chat-to', { to: e.target.id }, () => {
+                // load messages in the room
+                socket.emit('loadChatMessages', (messages) => {
+                    messages.forEach((item) => {
+                        renderMessage(item.message)
+                    })
 
-
-            // load messages in the room
-            socket.emit('loadChatMessages', (messages) => {
-                console.log(messages)
+                })
             })
         })
     }
@@ -75,12 +89,7 @@ socket.on('userFriendsList', async ({ friends }) => {
 
 socket.on('message', (message) => {
     console.log(message)
-    const html = Mustache.render(messageTemplate, {
-        message_body: message.message_body,
-        createdAt: moment(message.createdAt).format('h:mm a'),
-        username: message.username
-    })
-    $messages.insertAdjacentHTML('beforeend', html)
+    renderMessage(message)
 })
 
 
@@ -131,5 +140,8 @@ $addUserForm.addEventListener('submit', async (e) => {
     } catch (error) {
         alert(error)
     }
+
+    // clear add friend field
+    $addUserEmailInpit.value = ''
 
 })

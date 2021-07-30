@@ -107,7 +107,7 @@ io.on('connection',async (socket) => {
     })
 
 
-    socket.on('chat-to', async ({to} ) => {
+    socket.on('chat-to', async ({to}, callback) => {
         
         let name = room_name = createRoomName(to, socket.user._id)
         room = await Room.findOne({name})
@@ -117,7 +117,7 @@ io.on('connection',async (socket) => {
         }
 
         socket.join(room.name)
-        return 
+        callback() // aknowledge fn
     })
 
 

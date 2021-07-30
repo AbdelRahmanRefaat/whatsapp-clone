@@ -185,3 +185,7 @@ button:disabled {
 .hidden{
     display: none;
 }
+
+.friends-item{
+    padding: 3px;
+}

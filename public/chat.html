@@ -17,11 +17,12 @@
             <div class="add-new-user">
                 <form id="add-user-form">
                     <input type="email" placeholder="Email" id="add-user-email" required>
-                    <button class="add-user-button">add user</button>
+                    <button class="add-user-button">add</button>
                 </form>
             </div>
-        
-
+            <div class="friends-list">
+                
+            </div>
         </div>
         <div class="chat__main hidden">
             <div id="messages" class="chat__messages"></div>
@@ -51,7 +52,7 @@
             <h2>Friends</h2>
             <ul class="users">
                 {{#friends}}
-                  <button id="{{_id}}">{{username}}</button>
+                  <li class="friends-item"> <button  id="{{_id}}">{{username}}</button> </li>
                 {{/friends}}
             </ul>
     </script>
