@@ -1,6 +1,7 @@
 'use-strict'
 
-const socket = io()
+const socket = io({autoConnect: false})
+
 
 // Add-User Form Elements
 
@@ -25,6 +26,18 @@ const messageTemplate = document.querySelector('#message-template').innerHTML
 const token = JSON.parse(localStorage.getItem('token'))
 console.log("token", token)
 
+socket.auth = {token}
+socket.connect()
+
+// List friends on the side-bar
+socket.on('userFriendsList', ({friends}) => {
+    console.log(friends)
+    
+})
+
+
+
+
 socket.on('message', (message) => {
     console.log(message)
     const html = Mustache.render(messageTemplate, {
@@ -32,6 +45,7 @@ socket.on('message', (message) => {
     })
     $messages.insertAdjacentHTML('beforeend', html)
 })
+
 
 
 $chatForm.addEventListener('submit', (e) => {

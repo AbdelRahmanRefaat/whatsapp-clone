@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const {Friend, friendSchema} = require('./friend')
+
+
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const userSchema = new mongoose.Schema({
@@ -34,9 +37,7 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     friends: [{
-        friend: {
-            type: ObjectId
-        }
+        friend: friendSchema
     }],
     tokens: [{
         token: {
