@@ -24,7 +24,7 @@ $loginForm.addEventListener('submit' , async (e) => {
         if (res.status === 200) {
             const result = await res.json()
             localStorage.setItem('token', JSON.stringify(result.token))
-            window.location.href = 'http://localhost:3000/chat'
+            window.location.href = `http://localhost:3000/chat?token=${result.token}`
         }else{
             console.log({error: 'Please provide correct data!'})
         }

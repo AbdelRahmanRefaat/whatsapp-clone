@@ -27,19 +27,32 @@ router.post('/users/login', async (req, res) => {
         const { email, password } = req.body
         const user = await User.findByCredentials(email, password)
         const token = await user.generateAuthToken()
-        //return res.redirect('/chat')
         res.status(200).send({ token })
     } catch (error) {
         res.status(400).send({ error: 'Email or password is incorrect!' })
     }
 })
 
+router.post('/users/logout', auth, async (req, res) => {
+
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        await req.user.save()
+        res.status(200).send()
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+
+
 router.post('/users/adduser', auth, async (req, res) => {
-    
+
     try {
         const {email} = req.body
         const user_to_add = await User.findOne({email})
-        const friend = new Friend(user_to_add)
+        console.log(user_to_add)
         if(!user_to_add){
             throw new Error('User not found!')           
         }
@@ -55,6 +68,7 @@ router.post('/users/adduser', auth, async (req, res) => {
         if(isExist){
             throw new Error('User already in your friends list!')
         }
+        const friend = new Friend(user_to_add)
         req.user.friends.push({friend})
         await req.user.save()
         res.status(200).send({response: 'User added succesfully'})
@@ -64,5 +78,8 @@ router.post('/users/adduser', auth, async (req, res) => {
 
     }
 })
+
+
+
 
 module.exports = router

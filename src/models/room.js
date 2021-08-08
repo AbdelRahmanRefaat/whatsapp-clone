@@ -7,8 +7,7 @@ const roomSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
-        lowercase: true
+        unique: true
     },
     users: [ObjectId],
     messages: [{

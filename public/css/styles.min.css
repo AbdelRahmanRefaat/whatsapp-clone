@@ -85,7 +85,7 @@ button:disabled {
 
 .chat__sidebar {
     height: 100vh;
-    color: #fff;
+    /* color: #fff; */
     background: #333744;
     width: 225px;
     overflow-y: scroll
@@ -101,11 +101,12 @@ button:disabled {
 .chat__messages {
     flex-grow: 1;
     padding: 24px 24px 0;
-    overflow-y: scroll
+    overflow-y: scroll;
+  
 }
 
 .message {
-    margin-bottom: 16px
+    margin-bottom: 16px;
 }
 
 .message__name {
@@ -179,3 +180,10 @@ button:disabled {
 .friends-item button{
     width: 100%;
 }
+p {
+    width: 250px;
+    white-space: normal;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
+

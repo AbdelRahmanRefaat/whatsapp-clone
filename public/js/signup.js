@@ -29,9 +29,9 @@ $signupForm.addEventListener('submit', async (e) => {
         if(response.status === 200){
             const result = await response.json()
             localStorage.setItem('token', JSON.stringify(result.token))
-            window.location.href = 'http://localhost:3000/chat'
+            window.location.href = `http://localhost:3000/chat?token=${result.token}`
         }else{
-            console.log({error: 'Something went wrong!'})
+            console.log({error: 'Email already in use!. Try login!'})
         }
 
     } catch (error) {
